@@ -10,90 +10,46 @@
       margin: 20px auto;
       padding: 10px;
     }
-    h1, h2, h3 {
-      margin-bottom: 0.4rem;
-    }
-    fieldset {
-      margin-bottom: 1rem;
-      padding: 0.8rem 1rem;
-    }
-    legend {
-      font-weight: 600;
-    }
+    h1, h2, h3 { margin-bottom: 0.4rem; }
+    fieldset { margin-bottom: 1rem; padding: 0.8rem 1rem; }
+    legend { font-weight: 600; }
     label {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      margin: 0.3rem 0;
-      flex-wrap: wrap;
+      display: flex; justify-content: space-between; gap: 1rem;
+      margin: 0.3rem 0; flex-wrap: wrap;
     }
-    label span {
-      flex: 1 1 60%;
-      min-width: 180px;
-    }
-    label input,
-    label select {
-      max-width: 220px;
-      flex: 0 0 auto;
-    }
+    label span { flex: 1 1 60%; min-width: 180px; }
+    label input, label select { max-width: 220px; flex: 0 0 auto; }
 
     /* 🔶 GELBE EINGABEFELDER / AUSWAHLEN 🔶 */
-    input[type="number"],
-    select {
-      background-color: #fff9c4;       /* hellgelb */
-      border: 1px solid #fbc02d;       /* gelber Rand */
+    input[type="number"], select {
+      background-color: #fff9c4;
+      border: 1px solid #fbc02d;
       padding: 6px;
       border-radius: 6px;
     }
-    input[type="number"]:focus,
-    select:focus {
+    input[type="number"]:focus, select:focus {
       outline: none;
       border-color: #ffa000;
       box-shadow: 0 0 3px rgba(255, 160, 0, 0.8);
     }
 
-    .small {
-      font-size: 0.8rem;
-      color: #555;
-    }
+    .small { font-size: 0.8rem; color: #555; }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 0.5rem;
       font-size: 0.9rem;
     }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 0.35rem;
-      text-align: right;
-    }
-    th:first-child, td:first-child {
-      text-align: left;
-    }
-    .btn {
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      margin-top: 0.5rem;
-    }
-    .summary {
-      margin-top: 1rem;
-      padding: 0.8rem;
-      border: 1px solid #ccc;
-      background: #f9f9f9;
-    }
-    .two-cols {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .two-cols > div {
-      flex: 1 1 320px;
-    }
+    th, td { border: 1px solid #ccc; padding: 0.35rem; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    .btn { padding: 0.5rem 1rem; cursor: pointer; margin-top: 0.5rem; }
+    .summary { margin-top: 1rem; padding: 0.8rem; border: 1px solid #ccc; background: #f9f9f9; }
+    .two-cols { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .two-cols > div { flex: 1 1 320px; }
   </style>
 </head>
 <body>
 
-  <!-- Signatur oben -->
   <h1 style="text-align:center; margin-bottom:5px;">
     Geschrieben von F. Kaplan 🐯
   </h1>
@@ -234,7 +190,6 @@
       </div>
     </div>
 
-    <!-- Formeln für Bereitschaftsgeld -->
     <div class="small" id="bereitFormeln" style="margin-top:0.6rem;">
       <p id="bereitMoFrInfo"></p>
       <p id="bereitSaInfo"></p>
@@ -249,8 +204,8 @@
   <fieldset>
     <legend><strong>Abzugssätze (für Nettolohn-Berechnung)</strong></legend>
     <p class="small">
-      Diese Prozente werden auf den steuerpflichtigen Monatslohn angewendet.
-      Auch ohne Überstunden wird aus deinem Monatslohn Brutto & Netto berechnet.
+      Steuer-Abzüge (Lohnsteuer/Soli/Kirche) laufen über den steuerpflichtigen Lohn.<br>
+      Sozialversicherung (KV/PV/RV/ALV) läuft über <strong>SV-Brutto = steuerpflichtiger Lohn + ZV-Hinzurechnung</strong>.
     </p>
 
     <label>
@@ -265,11 +220,27 @@
       </select>
     </label>
 
+    <!-- ✅ NEU: SV-Basis -->
+    <div class="two-cols">
+      <div>
+        <label>
+          <span>ZV-Hinzurechnung für SV (€):<br><span class="small">(laut Abrechnung: 141,64 €)</span></span>
+          <input type="number" id="zv_hinz_eur" step="0.01" value="141.64">
+        </label>
+      </div>
+      <div>
+        <label>
+          <span>SV-Brutto (automatisch) (€):</span>
+          <input type="number" id="sv_brutto_auto" step="0.01" value="0" readonly>
+        </label>
+      </div>
+    </div>
+
     <div class="two-cols">
       <div>
         <label>
           <span>Lohnsteuer (%):</span>
-          <input type="number" id="p_lohnsteuer" step="0.01" value="7.32">
+          <input type="number" id="p_lohnsteuer" step="0.01" value="7.23">
         </label>
         <label>
           <span>Solidaritätszuschlag (%):</span>
@@ -279,44 +250,53 @@
           <span>Kirchensteuer (%):</span>
           <input type="number" id="p_kirche" step="0.01" value="0">
         </label>
+
+        <!-- ✅ Standardwerte aus deiner Abrechnung -->
         <label>
-          <span>Krankenversicherung (%):</span>
-          <input type="number" id="p_kv" step="0.01" value="8.52">
+          <span>Krankenversicherung (%):<br><span class="small">(AOK: 8,945%)</span></span>
+          <input type="number" id="p_kv" step="0.001" value="8.945">
         </label>
       </div>
 
       <div>
         <label>
-          <span>Pflegeversicherung (%):</span>
-          <input type="number" id="p_pv" step="0.01" value="2.40">
+          <span>Pflegeversicherung (%):<br><span class="small">(laut Abrechnung: 1,30%)</span></span>
+          <input type="number" id="p_pv" step="0.01" value="1.30">
         </label>
         <label>
-          <span>Rentenversicherung (%):</span>
-          <input type="number" id="p_rv" step="0.01" value="9.32">
+          <span>Rentenversicherung (%):<br><span class="small">(laut Abrechnung: 9,30%)</span></span>
+          <input type="number" id="p_rv" step="0.01" value="9.30">
         </label>
         <label>
-          <span>Arbeitslosenversicherung (%):</span>
+          <span>Arbeitslosenversicherung (%):<br><span class="small">(laut Abrechnung: 1,30%)</span></span>
           <input type="number" id="p_alv" step="0.01" value="1.30">
-        </label>
-        <label>
-          <span>ZVK / VBL Arbeitnehmer-Umlage (%):</span>
-          <input type="number" id="p_zvk_an" step="0.01" value="0">
         </label>
       </div>
     </div>
 
-    <label>
-      <span>ZVK / VBL Arbeitgeber-Umlage (%):<br>
-        <span class="small">(nur Info, wird nicht vom Netto abgezogen)</span>
-      </span>
-      <input type="number" id="p_zvk_ag" step="0.01" value="4.25">
-    </label>
+    <!-- ✅ NEU: ZVK/VBL als €-Beträge (wie auf der Abrechnung) -->
+    <div class="two-cols">
+      <div>
+        <label>
+          <span>ZVK / VBL Arbeitnehmer-Umlage (€):<br><span class="small">(laut Abrechnung: 126,90 €)</span></span>
+          <input type="number" id="zv_an_eur" step="0.01" value="126.90">
+        </label>
+      </div>
+      <div>
+        <label>
+          <span>ZVK / VBL Arbeitgeber-Umlage (€):<br><span class="small">(laut Abrechnung: 196,12 €)</span></span>
+          <input type="number" id="zv_ag_eur" step="0.01" value="196.12">
+        </label>
+      </div>
+    </div>
+
+    <p class="small">
+      Hinweis: ZVK/VBL wird hier wie auf der Abrechnung als fixer €-Betrag geführt (passt so am besten).
+    </p>
   </fieldset>
 
-  <!-- Ergebnis-Bereich -->
   <h2>Ergebnisse</h2>
 
-  <!-- Überstunden-Tabelle -->
   <h3>Überstunden, Zuschläge & Bereitschaftsgeld</h3>
   <table>
     <thead>
@@ -333,7 +313,6 @@
     </tbody>
   </table>
 
-  <!-- Bruttolohn-Details -->
   <div class="summary" id="bruttoBox">
     <strong>Bruttolohn Gesamt:</strong> <span id="bruttoGesamt">0,00 €</span>
     <hr>
@@ -349,13 +328,13 @@
     </ul>
   </div>
 
-  <!-- Nettolohn-Bereich -->
   <div class="summary" id="nettoBox">
     <strong>Nettolohn Gesamt:</strong> <span id="nettoGesamt">0,00 €</span>
     <hr>
     <p><strong>Nettolohn Berechnung:</strong></p>
     <ul>
-      <li>Steuerpflichtiger Lohn: <span id="steuerpflText">0,00 €</span></li>
+      <li>Steuerpflichtiger Lohn (Steuer-Brutto): <span id="steuerpflText">0,00 €</span></li>
+      <li>SV-Brutto (für KV/PV/RV/ALV): <span id="svBruttoText">0,00 €</span></li>
       <li>Lohnsteuer: <span id="lsText">0,00 €</span></li>
       <li>Solidaritätszuschlag: <span id="soliText">0,00 €</span></li>
       <li>Kirchensteuer: <span id="kircheText">0,00 €</span></li>
@@ -367,7 +346,6 @@
     </ul>
   </div>
 
-  <!-- Zusatzversorgung-Info -->
   <div class="summary" id="zvkBox">
     <p><strong>Zusatzversorgung (ZVK / VBL):</strong></p>
     <ul>
@@ -377,32 +355,16 @@
   </div>
 
   <script>
-    // TV-V Entgelttabelle 2025 (EG 8 & 9, Stufe 1–6)
     const tvvData = {
-      "8": {
-        "1": 4227.47,
-        "2": 4425.52,
-        "3": 4614.59,
-        "4": 4803.60,
-        "5": 4990.94,
-        "6": 5131.25
-      },
-      "9": {
-        "1": 4561.91,
-        "2": 4947.21,
-        "3": 5217.69,
-        "4": 5421.18,
-        "5": 5514.71,
-        "6": 5655.00
-      }
+      "8": {"1": 4227.47,"2": 4425.52,"3": 4614.59,"4": 4803.60,"5": 4990.94,"6": 5131.25},
+      "9": {"1": 4561.91,"2": 4947.21,"3": 5217.69,"4": 5421.18,"5": 5514.71,"6": 5655.00}
     };
 
-    // grobe Standard-Lohnsteuer-Prozente je Steuerklasse (nur als Startwert!)
     const steuerklasseDefaults = {
-      "I": 7.32,
+      "I": 7.23,
       "II": 6.50,
       "III": 2.00,
-      "IV": 7.32,
+      "IV": 7.23,
       "V": 18.00,
       "VI": 25.00
     };
@@ -416,10 +378,7 @@
     }
 
     function euro(v) {
-      return v.toLocaleString("de-DE", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }) + " €";
+      return v.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
     }
 
     function updateMonatslohnFromTarif() {
@@ -428,13 +387,8 @@
       const feld = document.getElementById("monatsBrutto");
 
       let wert = null;
-      if (tvvData[eg] && tvvData[eg][stufe]) {
-        wert = tvvData[eg][stufe];
-      }
-
-      if (wert !== null) {
-        feld.value = wert.toFixed(2);
-      }
+      if (tvvData[eg] && tvvData[eg][stufe]) wert = tvvData[eg][stufe];
+      if (wert !== null) feld.value = wert.toFixed(2);
 
       recalcStundenlohn();
     }
@@ -448,23 +402,17 @@
 
       if (!sRuf) {
         infoMo.textContent = "Bitte EG, Stufe und Wochenstunden wählen – dann wird das Bereitschaftsgeld pro Tag berechnet.";
-        infoSa.textContent = "";
-        infoSo.textContent = "";
-        infoFe.textContent = "";
+        infoSa.textContent = ""; infoSo.textContent = ""; infoFe.textContent = "";
         return;
       }
 
       const moTag = 2 * sRuf;
       const weTag = 4 * sRuf;
 
-      infoMo.textContent = "Mo–Fr: 2 × " + sRuf.toFixed(2) +
-        " € = " + moTag.toFixed(2) + " € pro Tag";
-      infoSa.textContent = "Samstag: 4 × " + sRuf.toFixed(2) +
-        " € = " + weTag.toFixed(2) + " € pro Tag";
-      infoSo.textContent = "Sonntag: 4 × " + sRuf.toFixed(2) +
-        " € = " + weTag.toFixed(2) + " € pro Tag";
-      infoFe.textContent = "Feiertag: 4 × " + sRuf.toFixed(2) +
-        " € = " + weTag.toFixed(2) + " € pro Tag";
+      infoMo.textContent = "Mo–Fr: 2 × " + sRuf.toFixed(2) + " € = " + moTag.toFixed(2) + " € pro Tag";
+      infoSa.textContent = "Samstag: 4 × " + sRuf.toFixed(2) + " € = " + weTag.toFixed(2) + " € pro Tag";
+      infoSo.textContent = "Sonntag: 4 × " + sRuf.toFixed(2) + " € = " + weTag.toFixed(2) + " € pro Tag";
+      infoFe.textContent = "Feiertag: 4 × " + sRuf.toFixed(2) + " € = " + weTag.toFixed(2) + " € pro Tag";
     }
 
     function recalcStundenlohn() {
@@ -473,21 +421,13 @@
       const wochen = getNumber("wochenstunden") || 1;
       const stundenProMonat = wochen * 4.348;
 
-      // Stundenlohn deiner Stufe
       const stundenlohn = monats / stundenProMonat;
-      document.getElementById("stundenlohn").value = isFinite(stundenlohn)
-        ? stundenlohn.toFixed(2)
-        : "0.00";
+      document.getElementById("stundenlohn").value = isFinite(stundenlohn) ? stundenlohn.toFixed(2) : "0.00";
 
-      // Stundenlohn für Rufbereitschaft: Stufe 2 der selben EG
       let monatsStufe2 = monats;
-      if (tvvData[eg] && tvvData[eg]["2"]) {
-        monatsStufe2 = tvvData[eg]["2"];
-      }
+      if (tvvData[eg] && tvvData[eg]["2"]) monatsStufe2 = tvvData[eg]["2"];
       const stundenlohnRuf = monatsStufe2 / stundenProMonat;
-      document.getElementById("stundenlohnRuf").value = isFinite(stundenlohnRuf)
-        ? stundenlohnRuf.toFixed(2)
-        : "0.00";
+      document.getElementById("stundenlohnRuf").value = isFinite(stundenlohnRuf) ? stundenlohnRuf.toFixed(2) : "0.00";
 
       updateBereitschaftInfo();
     }
@@ -495,9 +435,7 @@
     function setSteuerklasseDefaults() {
       const sk = document.getElementById("steuerklasse").value;
       const val = steuerklasseDefaults[sk];
-      if (typeof val === "number") {
-        document.getElementById("p_lohnsteuer").value = val.toFixed(2);
-      }
+      if (typeof val === "number") document.getElementById("p_lohnsteuer").value = val.toFixed(2);
     }
 
     function calcOvertime(hours, stundenlohn, zSatz) {
@@ -509,7 +447,6 @@
 
     function addRow(tbody, name, data) {
       const tr = document.createElement("tr");
-
       const tdName = document.createElement("td");
       const tdMenge = document.createElement("td");
       const tdGrund = document.createElement("td");
@@ -517,20 +454,12 @@
       const tdSum = document.createElement("td");
 
       tdName.textContent = name;
-      tdMenge.textContent = data.menge.toLocaleString("de-DE", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
+      tdMenge.textContent = data.menge.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       tdGrund.textContent = euro(data.grund);
       tdZ.textContent = euro(data.zuschlag);
       tdSum.textContent = euro(data.summe);
 
-      tr.appendChild(tdName);
-      tr.appendChild(tdMenge);
-      tr.appendChild(tdGrund);
-      tr.appendChild(tdZ);
-      tr.appendChild(tdSum);
-
+      tr.appendChild(tdName); tr.appendChild(tdMenge); tr.appendChild(tdGrund); tr.appendChild(tdZ); tr.appendChild(tdSum);
       tbody.appendChild(tr);
     }
 
@@ -541,19 +470,16 @@
       const sonderFaktor = getNumber("sonderFaktor");
       const steuerklasse = document.getElementById("steuerklasse").value;
 
-      // Überstunden (Stunden)
       const h_ue = getNumber("h_ueber");
       const h_sa = getNumber("h_samstag");
       const h_so = getNumber("h_sonntag");
       const h_fe = getNumber("h_feiertag");
 
-      // Zuschläge
       const z_ue = getNumber("z_ueber");
       const z_sa = getNumber("z_samstag");
       const z_so = getNumber("z_sonntag");
       const z_fe = getNumber("z_feiertag");
 
-      // Bereitschaftstage
       const d_bw = getNumber("d_bereit_w");
       const d_bsa = getNumber("d_bereit_sa");
       const d_bso = getNumber("d_bereit_so");
@@ -562,7 +488,6 @@
       const tbody = document.getElementById("overtimeRows");
       tbody.innerHTML = "";
 
-      let zusatzBrutto = 0;
       let overtimeBrutto = 0;
       let bereitBrutto = 0;
       let hatZeile = false;
@@ -570,7 +495,6 @@
       function handleOt(name, hours, zSatz) {
         if (hours <= 0) return;
         const data = calcOvertime(hours, stundenlohn, zSatz);
-        zusatzBrutto += data.summe;
         overtimeBrutto += data.summe;
         addRow(tbody, name, data);
         hatZeile = true;
@@ -581,19 +505,16 @@
         const betragProTag = faktorStunden * stundenlohnRuf;
         const betrag = days * betragProTag;
         const data = { menge: days, grund: betrag, zuschlag: 0, summe: betrag };
-        zusatzBrutto += betrag;
         bereitBrutto += betrag;
         addRow(tbody, name, data);
         hatZeile = true;
       }
 
-      // Überstunden (mit Zuschlag)
       handleOt("Überstunden (Werktag)", h_ue, z_ue);
       handleOt("Überstunden Samstag", h_sa, z_sa);
       handleOt("Überstunden Sonntag", h_so, z_so);
       handleOt("Überstunden Feiertag", h_fe, z_fe);
 
-      // Bereitschaft nach TV-V: Mo–Fr 2x Stundenentgelt, Sa/So/Fei 4x Stundenentgelt (Basis Stufe 2)
       handleBereit("Bereitschaft Mo–Fr (Tage)", d_bw, 2);
       handleBereit("Bereitschaft Samstag (Tage)", d_bsa, 4);
       handleBereit("Bereitschaft Sonntag (Tage)", d_bso, 4);
@@ -608,9 +529,15 @@
         tbody.appendChild(tr);
       }
 
-      // Steuerpflichtiger Monatslohn = Grundlohn + Überstunden + Bereitschaft
+      // Steuerpflichtiger Monatslohn (Steuer-Brutto)
       const steuerpfl = monatsGrund + overtimeBrutto + bereitBrutto;
-      const bruttoGesamt = steuerpfl;
+
+      // ✅ SV-Brutto (für Sozialversicherung)
+      const zvHinz = getNumber("zv_hinz_eur");
+      const svBemess = steuerpfl + zvHinz;
+
+      // UI: SV-Brutto Feld oben
+      document.getElementById("sv_brutto_auto").value = svBemess.toFixed(2);
 
       // Jahreswerte
       const jahresGrund = monatsGrund * 12;
@@ -621,33 +548,37 @@
       const p_ls = getNumber("p_lohnsteuer");
       const p_soli = getNumber("p_soli");
       const p_kirche = getNumber("p_kirche");
+
       const p_kv = getNumber("p_kv");
       const p_pv = getNumber("p_pv");
       const p_rv = getNumber("p_rv");
       const p_alv = getNumber("p_alv");
-      const p_zvk_an = getNumber("p_zvk_an");
-      const p_zvk_ag = getNumber("p_zvk_ag");
 
+      // ✅ ZVK/VBL als fixe €-Beträge
+      const zv_an_eur = getNumber("zv_an_eur");
+      const zv_ag_eur = getNumber("zv_ag_eur");
+
+      // Steuerabzüge -> Steuer-Brutto
       const bet_ls = steuerpfl * p_ls / 100;
       const bet_soli = steuerpfl * p_soli / 100;
       const bet_kirche = steuerpfl * p_kirche / 100;
-      const bet_kv = steuerpfl * p_kv / 100;
-      const bet_pv = steuerpfl * p_pv / 100;
-      const bet_rv = steuerpfl * p_rv / 100;
-      const bet_alv = steuerpfl * p_alv / 100;
-      const bet_zvk_an = steuerpfl * p_zvk_an / 100;
-      const bet_zvk_ag = steuerpfl * p_zvk_ag / 100;
+
+      // ✅ SV-Abzüge -> SV-Brutto
+      const bet_kv = svBemess * p_kv / 100;
+      const bet_pv = svBemess * p_pv / 100;
+      const bet_rv = svBemess * p_rv / 100;
+      const bet_alv = svBemess * p_alv / 100;
 
       const gesamtAbzuege =
         bet_ls + bet_soli + bet_kirche +
         bet_kv + bet_pv + bet_rv + bet_alv +
-        bet_zvk_an;
+        zv_an_eur;
 
       const netto = steuerpfl - gesamtAbzuege;
 
       // Brutto-Box
       document.getElementById("steuerklasseDetailText").textContent = "Klasse " + steuerklasse;
-      document.getElementById("bruttoGesamt").textContent = euro(bruttoGesamt);
+      document.getElementById("bruttoGesamt").textContent = euro(steuerpfl);
       document.getElementById("monatGrundText").textContent = euro(monatsGrund);
       document.getElementById("steuerUeberText").textContent = euro(overtimeBrutto);
       document.getElementById("bereitText").textContent = euro(bereitBrutto);
@@ -658,21 +589,24 @@
       // Netto-Box
       document.getElementById("nettoGesamt").textContent = euro(netto);
       document.getElementById("steuerpflText").textContent = euro(steuerpfl);
+      document.getElementById("svBruttoText").textContent = euro(svBemess);
+
       document.getElementById("lsText").textContent = euro(bet_ls);
       document.getElementById("soliText").textContent = euro(bet_soli);
       document.getElementById("kircheText").textContent = euro(bet_kirche);
+
       document.getElementById("kvText").textContent = euro(bet_kv);
       document.getElementById("pvText").textContent = euro(bet_pv);
       document.getElementById("rvText").textContent = euro(bet_rv);
       document.getElementById("alvText").textContent = euro(bet_alv);
-      document.getElementById("zvkAnText").textContent = euro(bet_zvk_an);
+
+      document.getElementById("zvkAnText").textContent = euro(zv_an_eur);
 
       // Zusatzversorgung-Box
-      document.getElementById("zvkAgText").textContent = euro(bet_zvk_ag);
-      document.getElementById("zvkAnInfoText").textContent = euro(bet_zvk_an);
+      document.getElementById("zvkAgText").textContent = euro(zv_ag_eur);
+      document.getElementById("zvkAnInfoText").textContent = euro(zv_an_eur);
     }
 
-    // Initial: TV-V-Wert setzen, Stundenlohn berechnen & Steuerklasse-Defaults
     updateMonatslohnFromTarif();
     setSteuerklasseDefaults();
   </script>
